@@ -109,7 +109,7 @@ export default class ParaOndeVou extends React.Component {
                         title='Ler QR CODE' 
                         backgroundColor='rgb(0,185,230)'
                         borderRadius={10}
-                        onPress={() => navigate('OndeEstouRoute')} 
+                        onPress={() => navigate('RotaRoute')} 
                     />
                 </View>
             </View>
