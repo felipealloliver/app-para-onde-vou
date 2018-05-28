@@ -1,5 +1,6 @@
 import React from 'react';
 import ws from '../services/rest-para-onde-vou';
+import NavigationBar from 'navigationbar-react-native';
 import { StyleSheet, View, ScrollView, FlatList, ActivityIndicator } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import { Avatar, Button, Card, FormInput, FormLabel, Icon, List, ListItem, Text } from 'react-native-elements';
@@ -27,24 +28,13 @@ const styles = StyleSheet.create({
     },
 });
 
-
-
-// const list = [
-//    {
-//        local: 'Átrio Central',
-//        image: 'https://para-onde-vou.herokuapp.com/imagem/11/imagem'
-//    },
-//    {
-//        local: 'Nelson Mandela',
-//        image: 'https://para-onde-vou.herokuapp.com/imagem/41/imagem'
-//    },
-//]
-
 export default class OndeEStou extends React.Component {
-    
-    static navigationOptions = { title: 'Onde Estou?' };
+    static navigationOptions = { title: '', header: null };
+    //static navigationOptions = { title: 'Onde Estou?' };
     state = {
-        list: []
+        list: [],
+        localOrigem: null,
+        localDestino: null
       };
 
     componentWillMount() {
@@ -76,15 +66,20 @@ export default class OndeEStou extends React.Component {
                     <Icon
                         name='location-on'
                         type='materialIcons'
-                        color='red'
-                        size={100} 
+                        color={this.state.localOrigem == null ? 'green' : 'red'} 
+                        size={80} 
                     />
+                    <Text h5 style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                        {this.state.localOrigem == null ? 'Selecione o Local que você está.':'Para onde deseja ir?'}
+                    </Text>
                 </View>
                 <ScrollView>
                     <List>
                         {
                             this.state.list.map((l, i) => {
-                                return <ListItem
+                                return (<ListItem
+                                    subtitle = {l.id == this.state.localOrigem ? 'Local de Partida':''}
+                                    onPress={() => this.selecionaLocal(l.id)}
                                     avatar={
                                         <Avatar
                                             large
@@ -95,9 +90,12 @@ export default class OndeEStou extends React.Component {
                                     title={l.nomeLocal}
                                     titleStyle={{
                                         fontSize: 22,
-                                        fontWeight: 'bold'
+                                        fontWeight: 'bold',
                                     }}
-                                />
+                                    containerStyle={{
+                                        backgroundColor: [l.id == this.state.localOrigem ? '#228b2211':'#fff']
+                                    }}
+                                />)
                             })
                         }
                     </List>
@@ -115,4 +113,21 @@ export default class OndeEStou extends React.Component {
             </View>
         )
     }};
+
+    selecionaLocal = (id) => {
+        const { navigate } = this.props.navigation;
+        /*
+        this.setState({
+            list: this.state.list.filter((j, i) => j.id !== id)
+          });
+        */
+        if (this.state.localOrigem === null) {
+            this.setState({localOrigem: id});
+        } else {
+            if (this.state.localOrigem != id) {
+            this.setState({localDestino: id});
+            navigate('RotaRoute');
+            }
+        }
+    }
 }

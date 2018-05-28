@@ -2,7 +2,7 @@ import React from 'react';
 import NavigationBar from 'navigationbar-react-native';
 import ws from '../services/rest-para-onde-vou';
 
-import { StyleSheet, View, ScrollView, StatusBar, TouchableOpacity, Picker } from 'react-native';
+import { Alert, StyleSheet, View, ScrollView, StatusBar, TouchableOpacity, Picker } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import { CheckBox, Button, Card, Divider, FormInput, FormLabel, FormValidationMessage, Header, Icon, PricingCard, SocialIcon, Text } from 'react-native-elements';
 
@@ -129,7 +129,16 @@ export default class Login extends React.Component {
     }).then((response) => response.json()).then((responseData) => {
       navigate('OndeEstouRoute');
     }).catch((error) => {
-      console.log("Erro na autenticação!");
+      Alert.alert(
+        'Validação',
+        'Usuário ou Senha Inválidos',
+        [
+          {text: 'Esqueci a Senha', onPress: () => navigate('OndeEstouRoute')},
+          {text: 'Cancelar', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+          {text: 'Ok', onPress: () => console.log('OK Pressed')},
+        ],
+        { cancelable: false }
+      )
     });
   };
 }
