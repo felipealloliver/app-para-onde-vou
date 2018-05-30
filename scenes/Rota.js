@@ -17,14 +17,7 @@ export default class Rota extends React.Component {
 
     static navigationOptions = { title: 'Siga a rota abaixo' };
     state = {
-        entries: [
-            {title: 'texto 6', url: 'http://www.outokummunseutu.fi/components/com_easyblog/themes/wireframe/images/placeholder-image.png'},
-            {title: 'texto 5', url: 'http://www.outokummunseutu.fi/components/com_easyblog/themes/wireframe/images/placeholder-image.png'},
-            {title: 'texto 4', url: 'http://www.outokummunseutu.fi/components/com_easyblog/themes/wireframe/images/placeholder-image.png'},
-            {title: 'texto 3', url: 'http://www.outokummunseutu.fi/components/com_easyblog/themes/wireframe/images/placeholder-image.png'},
-            {title: 'texto 2', url: 'http://www.outokummunseutu.fi/components/com_easyblog/themes/wireframe/images/placeholder-image.png'},
-            {title: 'texto 1', url: 'http://www.outokummunseutu.fi/components/com_easyblog/themes/wireframe/images/placeholder-image.png'},
-        ]
+        entries: []
     }
 
     _renderItem ({item, index}) {
@@ -32,21 +25,30 @@ export default class Rota extends React.Component {
             <View style={styles.slide}>
                 <Image
                     style={{width: Dimensions.get('window').width, height: 400}}
-                    source={{uri: item.url}}
+                    source={{uri: 'https://para-onde-vou.herokuapp.com/imagem/' + item.imagem.id + '/imagem'}}
                 />
-                <Text style={styles.title}>{ item.title }</Text>
+                <View style={{ 
+                    backgroundColor: 'rgb(6,90,157)', 
+                    borderRadius: 10, 
+                    marginLeft: 30, 
+                    marginRight: 30, 
+                    marginTop: -40,
+                    position: 'relative', zIndex: 1
+                }}>
+                <Text style={styles.title}>{ item.descricao }</Text>
+                </View>
             </View>
         );
     }
 
     componentWillMount() {
-        fetch(ws.getBaseURL() + '/local', {
+        fetch(ws.getBaseURL() + '/percurso/1/11', {
             method: 'GET',
             headers: { 'Accept': 'application/json','Content-Type': 'application/json'}
           }).then((response) => response.json()).then((responseData) => {
-              this.setState({list: responseData});
-              this.state.list.map(
-                  (l, i) => {console.log(l.nomeLocal)}
+              this.setState({entries: responseData});
+              this.state.entries.map(
+                  (l, i) => {console.log(l.idLocalPartida)}
               )
           }).catch((error) => {
             console.log(error);
@@ -55,6 +57,12 @@ export default class Rota extends React.Component {
     }
 
     render () {
+        if (this.state.entries.length === 0) {
+            return (
+                <ActivityIndicator size="large" color="#0000ff" />
+            );
+              } else {
+            const { navigate } = this.props.navigation;    
         return (
             <Carousel
               layout={'tinder'} 
@@ -69,5 +77,5 @@ export default class Rota extends React.Component {
               itemHeight={Dimensions.get('window').height}
             />
         );
-    };
+    }};
 }

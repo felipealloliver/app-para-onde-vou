@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View, ScrollView, StatusBar, TouchableOpacity, Picker } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import NavigationBar from 'navigationbar-react-native';
-
 import Login from './scenes/Login';
 import Cadastro from './scenes/Cadastro';
 import OndeEstou from './scenes/OndeEstou';
