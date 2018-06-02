@@ -24,7 +24,7 @@ export default class Rota extends React.Component {
         return (
             <View style={styles.slide}>
                 <Image
-                    style={{width: Dimensions.get('window').width, height: 400}}
+                    style={{width: Dimensions.get('window').width, height: 350}}
                     source={{uri: 'https://para-onde-vou.herokuapp.com/imagem/' + item.imagem.id + '/imagem'}}
                 />
                 <View style={{ 
@@ -36,6 +36,9 @@ export default class Rota extends React.Component {
                     position: 'relative', zIndex: 1
                 }}>
                 <Text style={styles.title}>{ item.descricao }</Text>
+                </View>
+                <View style={{marginTop: 30, alignItems: "center"}}>
+                    <Text style={{ fontWeight: "bold", color: "rgb(0,0,0)", fontSize: 20}}>{ item.descricao }</Text>
                 </View>
             </View>
         );
@@ -64,18 +67,66 @@ export default class Rota extends React.Component {
               } else {
             const { navigate } = this.props.navigation;    
         return (
-            <Carousel
-              layout={'tinder'} 
-              layoutCardOffset={3}
-              vertical={true}
-              ref={(c) => { this._carousel = c; }}
-              data={this.state.entries}
-              renderItem={this._renderItem}
-              sliderWidth={Dimensions.get('window').width}
-              itemWidth={Dimensions.get('window').width}
-              sliderHeight={Dimensions.get('window').height}
-              itemHeight={Dimensions.get('window').height}
-            />
+            <View>
+                <View>
+                    <Carousel
+                    //layout={'tinder'} 
+                    //layoutCardOffset={3}
+                    layout={'stack'} layoutCardOffset={18}
+                    vertical={true}
+                    ref={(c) => { this._carousel = c; }}
+                    data={this.state.entries}
+                    renderItem={this._renderItem}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={Dimensions.get('window').width}
+                    //sliderHeight={Dimensions.get('window').height}
+                    //itemHeight={Dimensions.get('window').height}
+                    sliderHeight={450}
+                    itemHeight={450}
+                    />
+                </View>
+                <View style={{position: "relative", alignItems: "center", marginTop: 10 }}>
+                    <Text style={{fontSize: 16}}>Está perdido? Clique abaixo para</Text>
+                    <Button
+                        title='Ler QR Code'
+                        titleStyle={{ fontWeight: "700" }}
+                        buttonStyle={{
+                            backgroundColor: "rgba(92, 99,216, 1)",
+                            width: 150,
+                            height: 45,
+                            borderColor: "transparent",
+                            borderWidth: 0,
+                            borderRadius: 10
+                        }}
+                    />
+                </View>
+                <View style={{flex: 1, flexDirection: "row", marginTop: 10, alignSelf: "center"}}>
+                    <Button
+                        title='Cancelar'
+                        titleStyle={{ fontWeight: "700" }}
+                        buttonStyle={{
+                            backgroundColor: "rgba(242, 91, 90, 1)",
+                            width: 150,
+                            height: 45,
+                            borderColor: "transparent",
+                            borderWidth: 0,
+                            borderRadius: 10
+                        }}
+                    />
+                    <Button
+                        title='Finalizar'
+                        titleStyle={{ fontWeight: "700" }}
+                        buttonStyle={{
+                            backgroundColor: "rgba(0, 190, 0, 1)",
+                            width: 150,
+                            height: 45,
+                            borderColor: "transparent",
+                            borderWidth: 0,
+                            borderRadius: 10
+                        }}
+                    />
+                </View>
+            </View>
         );
     }};
 }
