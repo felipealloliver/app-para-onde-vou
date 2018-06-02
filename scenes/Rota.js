@@ -27,16 +27,6 @@ export default class Rota extends React.Component {
                     style={{width: Dimensions.get('window').width, height: 350}}
                     source={{uri: 'https://para-onde-vou.herokuapp.com/imagem/' + item.imagem.id + '/imagem'}}
                 />
-                <View style={{ 
-                    backgroundColor: 'rgb(6,90,157)', 
-                    borderRadius: 10, 
-                    marginLeft: 30, 
-                    marginRight: 30, 
-                    marginTop: -40,
-                    position: 'relative', zIndex: 1
-                }}>
-                <Text style={styles.title}>{ item.descricao }</Text>
-                </View>
                 <View style={{marginTop: 30, alignItems: "center"}}>
                     <Text style={{ fontWeight: "bold", color: "rgb(0,0,0)", fontSize: 20}}>{ item.descricao }</Text>
                 </View>
