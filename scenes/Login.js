@@ -119,15 +119,21 @@ export default class Login extends React.Component {
 
   validateLogin = () => {
     const { navigate } = this.props.navigation;
-    const autenticar = fetch(ws.getBaseURL() + '/usuario/autenticar', {
+    const autenticar = fetch(ws.getBaseURL() + '/login', {
       method: 'POST',
       headers: { 'Accept': 'application/json','Content-Type': 'application/json'},
       body: JSON.stringify({
-        email: this.state.inputEmail,
-        senha: this.state.inputSenha
+        username: this.state.inputEmail,
+        password: this.state.inputSenha
       })
     }).then((response) => response.json()).then((responseData) => {
-      navigate('OndeEstouRoute');
+      /*this.setState({token: response.header.get('Authorization')});
+      if (token === null ) {
+        Alert.alert('Falha na autenticação');
+      } else {
+      navigate("OndeEstouRoute", {token: response.header.get('Authorization')});
+    }*/
+      navigate("OndeEstouRoute");
     }).catch((error) => {
       Alert.alert(
         'Validação',
