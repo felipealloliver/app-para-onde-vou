@@ -126,7 +126,7 @@ export default class OndeEStou extends React.Component {
         } else {
             if (this.state.localOrigem != id) {
             this.setState({localDestino: id});
-            navigate('RotaRoute');
+            navigate("RotaRoute", {idLocalPartida: this.state.localOrigem, idLocalDestino: id});
             }
         }
     }

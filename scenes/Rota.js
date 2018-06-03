@@ -35,7 +35,10 @@ export default class Rota extends React.Component {
     }
 
     componentWillMount() {
-        fetch(ws.getBaseURL() + '/percurso/1/11', {
+
+        console.log(ws.getBaseURL() + '/percurso/' + this.props.navigation.getParam("idLocalPartida", 0) + '/' + this.props.navigation.getParam("idLocalDestino", 0)); 
+  
+        fetch(ws.getBaseURL() + '/percurso/' + this.props.navigation.getParam("idLocalPartida", 0) + '/' + this.props.navigation.getParam("idLocalDestino", 0), {
             method: 'GET',
             headers: { 'Accept': 'application/json','Content-Type': 'application/json'}
           }).then((response) => response.json()).then((responseData) => {
