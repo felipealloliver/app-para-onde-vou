@@ -40,7 +40,7 @@ export default class OndeEStou extends React.Component {
     componentWillMount() {
         fetch(ws.getBaseURL() + '/local', {
             method: 'GET',
-            headers: { 'Accept': 'application/json','Content-Type': 'application/json'}
+            headers: { 'Accept': 'application/json','Content-Type': 'application/json', 'Authorization' : this.props.navigation.getParam("token", 0)}
           }).then((response) => response.json()).then((responseData) => {
               this.setState({list: responseData});
               this.state.list.map(

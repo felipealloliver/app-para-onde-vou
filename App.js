@@ -24,10 +24,6 @@ const RootStack = createStackNavigator(
   },
   {
     headerMode: 'screen',
-<<<<<<< HEAD
     initialRouteName: 'LoginRoute'
-=======
-    initialRouteName: 'OndeEstouRoute'
->>>>>>> 0e5e2b6ccf35fd6232a0b19840eb0644a10872e7
   }
 );
