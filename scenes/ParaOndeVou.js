@@ -3,6 +3,7 @@ import ws from '../services/rest-para-onde-vou';
 import { StyleSheet, View, ScrollView, FlatList, ActivityIndicator } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import { Avatar, Button, Card, FormInput, FormLabel, Icon, List, ListItem, Text } from 'react-native-elements';
+import { CameraKitCamera } from 'react-native-camera-kit';
 
 const styles = StyleSheet.create({
     container: {
@@ -44,7 +45,8 @@ export default class ParaOndeVou extends React.Component {
     
     static navigationOptions = { title: 'Para onde vou?' };
     state = {
-        list: []
+        list: [],
+        camera: false
       };
 
     componentWillMount() {
@@ -67,7 +69,7 @@ export default class ParaOndeVou extends React.Component {
         return (
             <ActivityIndicator size="large" color="#0000ff" />
         );
-          } else {
+          } else if (this.state.camera) {
         const { navigate } = this.props.navigation;
         
         return (
@@ -114,5 +116,22 @@ export default class ParaOndeVou extends React.Component {
                 </View>
             </View>
         )
+    } else {
+        <CameraKitCamera
+            ref={cam => this.camera = cam}
+            style={{
+                flex: 1,
+                backgroundColor: 'white'
+            }}
+            cameraOptions={{
+                flashMode: 'auto',             // on/off/auto(default)
+                focusMode: 'on',               // off/on(default)
+                zoomMode: 'on',                // off/on(default)
+                ratioOverlay:'1:1',            // optional, ratio overlay on the camera and crop the image seamlessly
+                ratioOverlayColor: '#00000077' // optional
+            }}
+            onReadQRCode={(event) => console.log(event.nativeEvent.qrcodeStringValue)} // optional
+            
+            />
     }};
 }
