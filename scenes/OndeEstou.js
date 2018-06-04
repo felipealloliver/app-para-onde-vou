@@ -34,7 +34,8 @@ export default class OndeEStou extends React.Component {
     state = {
         list: [],
         localOrigem: null,
-        localDestino: null
+        localDestino: null,
+        rota_id: null
       };
 
     componentWillMount() {
@@ -126,7 +127,28 @@ export default class OndeEStou extends React.Component {
         } else {
             if (this.state.localOrigem != id) {
             this.setState({localDestino: id});
-            navigate("RotaRoute", {idLocalPartida: this.state.localOrigem, idLocalDestino: id});
+            fetch(ws.getBaseURL() + '/rota', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Authorization': this.props.navigation.getParam("token", 0)},
+                body: JSON.stringify({
+                date: "2018-06-03",
+                usuario: {
+                    id: 1
+                },
+                localOrigem: {
+                    id: this.state.localOrigem
+                },
+                localDestino: {
+                    id: this.state.localDestino
+                },
+                status: "EM_TRANSITO"
+                })
+            }).then((response) => {
+                this.setState({rota_id: response.headers.get('Location')});
+            }).catch((error) => {
+                console.log(error);
+            });
+            navigate("RotaRoute", {idLocalPartida: this.state.localOrigem, idLocalDestino: id, rota: this.state.rota_id, token: this.props.navigation.getParam("token", 0)});
             }
         }
     }
