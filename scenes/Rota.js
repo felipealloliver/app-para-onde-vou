@@ -105,6 +105,7 @@ export default class Rota extends React.Component {
                             borderWidth: 0,
                             borderRadius: 10
                         }}
+                        onPress={ this.cancelarRota }
                     />
                     <Button
                         title='Finalizar'
@@ -117,9 +118,53 @@ export default class Rota extends React.Component {
                             borderWidth: 0,
                             borderRadius: 10
                         }}
+                        onPress={ this.finalizarRota }
                     />
                 </View>
             </View>
         );
     }};
+
+
+    finalizarRota = () => {
+        const { navigate } = this.props.navigation;
+        const finalizar = fetch(ws.getBaseURL() + '/rota' + this.props.navigation.getParam("rota"), {
+          method: 'PATCH',
+          headers: {'Content-Type': 'application/json', 'Authorization': this.props.navigation.getParam("token", 0)}
+        }).then((response) => {
+          navigate("OndeEstouRoute", { token: response.headers.get('Authorization') });
+        }).catch((error) => {
+          console.log(error);
+          Alert.alert(
+            'Falha ao encerrar a Rota',
+            this.props.navigation.getParam("rota",0),
+            [
+              {text: 'Cancelar', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: 'Ok', onPress: () => console.log('OK Pressed')},
+            ],
+            { cancelable: false }
+          )
+        });
+      };
+
+      cancelarRota = () => {
+        const { navigate } = this.props.navigation;
+        const cancelar = fetch(ws.getBaseURL() + '/rota' + this.props.navigation.getParam("rota"), {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json', 'Authorization': this.props.navigation.getParam("token", 0)}
+        }).then((response) => {
+          navigate("OndeEstouRoute", { token: response.headers.get('Authorization') });
+        }).catch((error) => {
+          console.log(error);
+          Alert.alert(
+            'Falha ao cancelar a Rota',
+            this.props.navigation.getParam("rota",0),
+            [
+              {text: 'Cancelar', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: 'Ok', onPress: () => console.log('OK Pressed')},
+            ],
+            { cancelable: false }
+          )
+        });
+      };
 }

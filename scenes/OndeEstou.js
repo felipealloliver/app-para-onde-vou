@@ -39,7 +39,7 @@ export default class OndeEStou extends React.Component {
         requestingCameraAuthorization: true,
         localOrigem: null,
         localDestino: null,
-        rota_id: null
+        idrota: null
       };
 
     componentWillMount() {
@@ -174,7 +174,7 @@ export default class OndeEStou extends React.Component {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json', 'Authorization': this.props.navigation.getParam("token", 0)},
                 body: JSON.stringify({
-                date: "2018-06-03",
+                date: "03-06-2018",
                 usuario: {
                     id: 1
                 },
@@ -182,16 +182,16 @@ export default class OndeEStou extends React.Component {
                     id: this.state.localOrigem
                 },
                 localDestino: {
-                    id: this.state.localDestino
+                    id: id
                 },
                 status: "EM_TRANSITO"
                 })
             }).then((response) => {
-                this.setState({rota_id: response.headers.get('Location')});
+                //this.setState({idrota: response.headers.get('Authorization')});
+                navigate("RotaRoute", {idLocalPartida: this.state.localOrigem, idLocalDestino: id, rota: response.headers.get('Location'), token: this.props.navigation.getParam("token", 0)});
             }).catch((error) => {
                 console.log(error);
             });
-            navigate("RotaRoute", {idLocalPartida: this.state.localOrigem, idLocalDestino: id, rota: this.state.rota_id, token: this.props.navigation.getParam("token", 0)});
             }
         }
     }
