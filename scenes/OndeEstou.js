@@ -4,6 +4,7 @@ import NavigationBar from 'navigationbar-react-native';
 import { StyleSheet, View, ScrollView, FlatList, ActivityIndicator } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import { Avatar, Button, Card, FormInput, FormLabel, Icon, List, ListItem, Text } from 'react-native-elements';
+import { CameraKitCamera, CameraKitCameraScreen } from 'react-native-camera-kit';
 
 const styles = StyleSheet.create({
     container: {
@@ -33,6 +34,9 @@ export default class OndeEStou extends React.Component {
     //static navigationOptions = { title: 'Onde Estou?' };
     state = {
         list: [],
+        camera: false,
+        isCameraAuthorized: false,
+        requestingCameraAuthorization: true,
         localOrigem: null,
         localDestino: null,
         rota_id: null
@@ -53,12 +57,29 @@ export default class OndeEStou extends React.Component {
 
     }
 
+    requestPermissions = async () => {
+        const deviceCameraAuthorizationStatus = await CameraKitCamera.checkDeviceCameraAuthorizationStatus()
+    
+        if(deviceCameraAuthorizationStatus === true) {
+            this.setState({ isCameraAuthorized: true })
+        } else if(deviceCameraAuthorizationStatus === -1) {
+            this.setState({ requestingCameraAuthorization: true })
+            const isCameraAuthorized = await CameraKitCamera.requestDeviceCameraAuthorization()
+    
+            this.setState({
+                requestingCameraAuthorization: false,
+                isCameraAuthorized
+            })
+        }
+    }
+    
+
     render() {
         if (this.state.list.length === 0) {
         return (
             <ActivityIndicator size="large" color="#0000ff" />
         );
-          } else {
+          } else if (this.state.camera == false) {
         const { navigate } = this.props.navigation;
         
         return (
@@ -108,11 +129,33 @@ export default class OndeEStou extends React.Component {
                         title='Ler QR CODE' 
                         backgroundColor='rgb(0,185,230)'
                         borderRadius={10}
-                        onPress={() => navigate('ParaOndeVouRoute')} 
+                        onPress={() => {
+                            this.requestPermissions();
+                            this.setState({camera: true});
+                    }} 
                     />
                 </View>
             </View>
         )
+    } else {
+        return (
+        <CameraKitCameraScreen
+            actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
+            onBottomButtonPressed={(event) => this.setState({camera: false})}
+            scanBarcode={true}
+            laserColor={"blue"}
+            frameColor={"green"}
+
+            onReadCode={((event) => {
+                    console.log(event.nativeEvent.codeStringValue);
+                    this.setState({camera: false});
+                })} //optional
+            hideControls={false}           //(default false) optional, hide buttons and additional controls on top and bottom of screen
+            showFrame={true}   //(default false) optional, show frame with transparent layer (qr code or barcode will be read on this area ONLY), start animation for scanner,that stoped when find any code. Frame always at center of the screen
+            offsetForScannerFrame = {30}   //(default 30) optional, offset from left and right side of the screen
+            heightForScannerFrame = {600}  //(default 200) optional, change height of the scanner frame
+            colorForScannerFrame = {'red'} //(default white) optional, change colot of the scanner frame
+        />)
     }};
 
     selecionaLocal = (id) => {
