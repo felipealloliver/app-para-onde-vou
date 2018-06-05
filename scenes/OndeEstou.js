@@ -148,6 +148,7 @@ export default class OndeEStou extends React.Component {
 
             onReadCode={((event) => {
                     console.log(event.nativeEvent.codeStringValue);
+                    this.setState({localOrigem: event.nativeEvent.codeStringValue});
                     this.setState({camera: false});
                 })} //optional
             hideControls={false}           //(default false) optional, hide buttons and additional controls on top and bottom of screen
