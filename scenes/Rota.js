@@ -4,6 +4,7 @@ import { Image, Dimensions, StyleSheet, View, ScrollView, FlatList, ActivityIndi
 import { createStackNavigator } from 'react-navigation';
 import { Avatar, Button, Card, FormInput, FormLabel, Icon, List, ListItem, Text } from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
+import { CameraKitCamera, CameraKitCameraScreen } from 'react-native-camera-kit';
 
 const styles = StyleSheet.create({
     container: {
@@ -17,7 +18,10 @@ export default class Rota extends React.Component {
 
     static navigationOptions = { title: 'Siga a rota abaixo' };
     state = {
-        entries: []
+        entries: [],
+        localOrigem: null,
+        localDestino: null,
+        camera: false,
     }
 
     _renderItem ({item, index}) {
@@ -35,7 +39,6 @@ export default class Rota extends React.Component {
     }
 
     componentWillMount() {
-
         console.log(ws.getBaseURL() + '/percurso/' + this.props.navigation.getParam("idLocalPartida", 0) + '/' + this.props.navigation.getParam("idLocalDestino", 0)); 
   
         fetch(ws.getBaseURL() + '/percurso/' + this.props.navigation.getParam("idLocalPartida", 0) + '/' + this.props.navigation.getParam("idLocalDestino", 0), {
@@ -49,15 +52,46 @@ export default class Rota extends React.Component {
           }).catch((error) => {
             console.log(error);
           });
+    }
 
+    realocarRota(id) {
+        const cancelar = fetch(ws.getBaseURL() + '/rota' + this.props.navigation.getParam("rota"), {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json', 'Authorization': this.props.navigation.getParam("token", 0)}
+        }).then((response) => {
+            console.log(ws.getBaseURL() + '/percurso/' + id + '/' + this.props.navigation.getParam("idLocalDestino", 0));
+            fetch(ws.getBaseURL() + '/percurso/' + id + '/' + this.props.navigation.getParam("idLocalDestino", 0), {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json', 'Authorization': this.props.navigation.getParam("token", 0)}
+              }).then((response) => response.json()).then((responseData) => {
+                  this.setState({entries: responseData});
+                  this.state.entries.map(
+                      (l, i) => {console.log(l.idLocalPartida)}
+                  )
+              }).catch((error) => {
+                console.log(error);
+              }); 
+        }).catch((error) => {
+          console.log(error);
+          Alert.alert(
+            'Falha ao cancelar a Rota',
+            this.props.navigation.getParam("rota",0),
+            [
+              {text: 'Cancelar', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: 'Ok', onPress: () => console.log('OK Pressed')},
+            ],
+            { cancelable: false }
+          )
+        });
     }
 
     render () {
+        console.log(this.state.camera)
         if (this.state.entries.length === 0) {
             return (
                 <ActivityIndicator size="large" color="#0000ff" />
             );
-              } else {
+              } else if (this.state.camera == false) {
             const { navigate } = this.props.navigation;    
         return (
             <View>
@@ -74,8 +108,8 @@ export default class Rota extends React.Component {
                     itemWidth={Dimensions.get('window').width}
                     //sliderHeight={Dimensions.get('window').height}
                     //itemHeight={Dimensions.get('window').height}
-                    sliderHeight={450}
-                    itemHeight={450}
+                    sliderHeight={400}
+                    itemHeight={400}
                     />
                 </View>
                 <View style={{position: "relative", alignItems: "center", marginTop: 10 }}>
@@ -83,6 +117,7 @@ export default class Rota extends React.Component {
                     <Button
                         title='Ler QR Code'
                         titleStyle={{ fontWeight: "700" }}
+                        onPress={() => {this.setState({camera: true})}}
                         buttonStyle={{
                             backgroundColor: "rgba(92, 99,216, 1)",
                             width: 150,
@@ -123,6 +158,26 @@ export default class Rota extends React.Component {
                 </View>
             </View>
         );
+    } else {
+        return (
+            <CameraKitCameraScreen
+                actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
+                onBottomButtonPressed={(event) => this.setState({camera: false})}
+                scanBarcode={true}
+                laserColor={"blue"}
+                frameColor={"green"}
+    
+                onReadCode={((event) => {
+                        console.log(event.nativeEvent.codeStringValue);
+                        this.setState({camera: false});
+                        this.realocarRota(event.nativeEvent.codeStringValue);
+                    })} //optional
+                hideControls={false}           //(default false) optional, hide buttons and additional controls on top and bottom of screen
+                showFrame={true}   //(default false) optional, show frame with transparent layer (qr code or barcode will be read on this area ONLY), start animation for scanner,that stoped when find any code. Frame always at center of the screen
+                offsetForScannerFrame = {30}   //(default 30) optional, offset from left and right side of the screen
+                heightForScannerFrame = {600}  //(default 200) optional, change height of the scanner frame
+                colorForScannerFrame = {'red'} //(default white) optional, change colot of the scanner frame
+            />)
     }};
 
 
@@ -132,7 +187,7 @@ export default class Rota extends React.Component {
           method: 'PATCH',
           headers: {'Content-Type': 'application/json', 'Authorization': this.props.navigation.getParam("token", 0)}
         }).then((response) => {
-          navigate("OndeEstouRoute", { token: response.headers.get('Authorization') });
+          navigate("OndeEstouRoute", { token: this.props.navigation.getParam("token", 0) });
         }).catch((error) => {
           console.log(error);
           Alert.alert(
@@ -153,7 +208,7 @@ export default class Rota extends React.Component {
           method: 'DELETE',
           headers: {'Content-Type': 'application/json', 'Authorization': this.props.navigation.getParam("token", 0)}
         }).then((response) => {
-          navigate("OndeEstouRoute", { token: response.headers.get('Authorization') });
+          navigate("OndeEstouRoute", { token: this.props.navigation.getParam("token", 0) });
         }).catch((error) => {
           console.log(error);
           Alert.alert(

@@ -189,7 +189,10 @@ export default class OndeEStou extends React.Component {
                 })
             }).then((response) => {
                 //this.setState({idrota: response.headers.get('Authorization')});
-                navigate("RotaRoute", {idLocalPartida: this.state.localOrigem, idLocalDestino: id, rota: response.headers.get('Location'), token: this.props.navigation.getParam("token", 0)});
+                localPartida = this.state.localOrigem;
+                this.setState({localDestino: null, localOrigem: null, camera: false});
+                navigate("RotaRoute", {idLocalPartida: localPartida, idLocalDestino: id, rota: response.headers.get('Location'), token: this.props.navigation.getParam("token", 0)});
+                
             }).catch((error) => {
                 console.log(error);
             });
